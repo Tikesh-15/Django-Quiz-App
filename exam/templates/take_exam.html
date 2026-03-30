@@ -1,0 +1,147 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container pb-5">
+    <div class="row sticky-top bg-white py-3 shadow-sm mb-4 border-bottom" style="top: 0; z-index: 1000; border-radius: 0 0 15px 15px;">
+        <div class="col-md-8 d-flex align-items-center">
+            <div class="p-2 bg-primary rounded text-white me-3">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <h4 class="text-dark mb-0 fw-bold">{{ exam.title }}</h4>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="d-inline-block p-2 rounded shadow-sm border bg-light">
+                <span class="text-muted small fw-bold text-uppercase me-2">Time Remaining:</span>
+                <span id="timer" class="h5 mb-0 fw-bold text-danger">--:--</span>
+            </div>
+        </div>
+    </div>
+
+    <form id="examForm" method="POST">
+        {% csrf_token %}
+        {% for q in questions %}
+        <div class="card mb-4 p-4 border-0 shadow-sm question-card">
+            <div class="d-flex justify-content-between mb-3">
+                <span class="badge bg-secondary px-3 py-2">Question {{ forloop.counter }}</span>
+                <span class="text-muted small"><i class="far fa-check-circle"></i> Multiple Choice</span>
+            </div>
+            
+            <h5 class="fw-bold mb-4 text-dark" style="line-height: 1.6;">{{ q.text }}</h5>
+            
+            <div class="options-grid">
+                <div class="form-check custom-option mb-3 p-3 border rounded">
+                    <input class="form-check-input ms-0 me-3" type="radio" name="question_{{ q.id }}" value="1" id="q{{ q.id }}_1">
+                    <label class="form-check-label w-100 h-100 cursor-pointer" for="q{{ q.id }}_1">
+                        {{ q.option1 }}
+                    </label>
+                </div>
+                <div class="form-check custom-option mb-3 p-3 border rounded">
+                    <input class="form-check-input ms-0 me-3" type="radio" name="question_{{ q.id }}" value="2" id="q{{ q.id }}_2">
+                    <label class="form-check-label w-100 h-100 cursor-pointer" for="q{{ q.id }}_2">
+                        {{ q.option2 }}
+                    </label>
+                </div>
+                <div class="form-check custom-option mb-3 p-3 border rounded">
+                    <input class="form-check-input ms-0 me-3" type="radio" name="question_{{ q.id }}" value="3" id="q{{ q.id }}_3">
+                    <label class="form-check-label w-100 h-100 cursor-pointer" for="q{{ q.id }}_3">
+                        {{ q.option3 }}
+                    </label>
+                </div>
+                <div class="form-check custom-option mb-3 p-3 border rounded">
+                    <input class="form-check-input ms-0 me-3" type="radio" name="question_{{ q.id }}" value="4" id="q{{ q.id }}_4">
+                    <label class="form-check-label w-100 h-100 cursor-pointer" for="q{{ q.id }}_4">
+                        {{ q.option4 }}
+                    </label>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="text-center mt-5 mb-5">
+            <button type="button" class="btn btn-pro btn-xl px-5 py-3 shadow-lg fw-bold" onclick="confirmSubmit()">
+                <i class="fas fa-cloud-upload-alt me-2"></i> SUBMIT FINAL EXAM
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    let timeLeft = {{ exam.duration_minutes }} * 60;
+    const timerSpan = document.getElementById('timer');
+    const examForm = document.getElementById('examForm');
+
+    const countdown = setInterval(() => {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+
+        timerSpan.innerHTML = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        // Change color to bright red if less than 1 minute left
+        if (timeLeft < 60) {
+            timerSpan.classList.add('animate-pulse');
+        }
+
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            alert("TIME EXPIRED! Aapka exam automatically submit ho raha hai.");
+            window.onbeforeunload = null; // Submit hone dete hain
+            examForm.submit();
+        }
+        timeLeft--;
+    }, 1000);
+
+    function confirmSubmit() {
+        if (confirm("Kya aap sach mein exam submit karna chahte hain? Iske baad badlav nahi ho payega.")) {
+            window.onbeforeunload = null; // Warning hatao taaki submit ho sake
+            examForm.submit();
+        }
+    }
+
+    // Security: Stop accidental page reload
+    window.onbeforeunload = function() {
+        return "Warning: Agar aapne page refresh kiya toh aapka progress chala jayega!";
+    };
+    // Tab switching detect karne ke liye
+document.addEventListener("visibilitychange", function() {
+    if (document.hidden) {
+        alert("CHEATING WARNING: Aapne tab badla hai! Ye report admin ko bhej di jayegi.");
+        // Chaho toh yahan direct submit bhi kar sakte ho:
+        // document.getElementById('examForm').submit();
+    }
+});
+
+// Right Click block karne ke liye (taaki copy na kar sake)
+document.addEventListener('contextmenu', event => event.preventDefault());
+</script>
+
+<style>
+    .question-card { transition: transform 0.2s; }
+    .question-card:hover { transform: scale(1.01); }
+    
+    .custom-option { 
+        background-color: #ffffff; 
+        transition: all 0.2s ease; 
+        cursor: pointer;
+    }
+    .custom-option:hover { 
+        background-color: #e8eaf6; 
+        border-color: #1a237e !important;
+    }
+    
+    /* Option select hone par highlight */
+    .form-check-input:checked + .form-check-label {
+        font-weight: bold;
+        color: #1a237e;
+    }
+    
+    .cursor-pointer { cursor: pointer; }
+    .btn-xl { font-size: 1.25rem; border-radius: 50px; }
+    
+    .animate-pulse {
+        animation: pulse 1s infinite;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+</style>
+{% endblock %}

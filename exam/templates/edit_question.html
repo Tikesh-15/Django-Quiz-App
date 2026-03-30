@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg border-0" style="border-radius: 20px;">
+                <div class="card-header bg-warning text-dark p-4 border-0">
+                    <h4 class="mb-0 fw-bold"><i class="fas fa-edit me-2"></i> Edit Question</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Question Text</label>
+                            <textarea name="text" class="form-control" rows="3" required>{{ q.text }}</textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Option 1</label>
+                                <input type="text" name="opt1" value="{{ q.option1 }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Option 2</label>
+                                <input type="text" name="opt2" value="{{ q.option2 }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Option 3</label>
+                                <input type="text" name="opt3" value="{{ q.option3 }}" class="form-control" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small fw-bold">Option 4</label>
+                                <input type="text" name="opt4" value="{{ q.option4 }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mt-4 mb-4 p-3 bg-light rounded shadow-sm border">
+                            <label class="form-label fw-bold text-primary">Correct Option (1-4)</label>
+                            <input type="number" name="correct" value="{{ q.correct_option }}" min="1" max="4" class="form-control border-primary" required>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg fw-bold shadow">
+                                <i class="fas fa-save me-2"></i> UPDATE QUESTION
+                            </button>
+                            <a href="{% url 'view_questions' q.exam.id %}" class="btn btn-light">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

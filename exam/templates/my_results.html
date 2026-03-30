@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h2 class="fw-bold text-dark mb-1">
+                <i class="fas fa-history text-primary me-2"></i>My Exam History
+            </h2>
+            <p class="text-muted">Aapne ab tak jitne bhi exams diye hain, unka poora record yahan hai.</p>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-4 shadow-sm fw-bold">
+                <i class="fas fa-plus-circle me-1"></i> Give New Exam
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {% for res in results %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-sm border-0 h-100 overflow-hidden result-card" style="border-radius: 20px;">
+                <div class="card-header border-0 {% if res.percentage >= 33 %}bg-success{% else %}bg-danger{% endif %} text-white py-2 px-4 d-flex justify-content-between align-items-center">
+                    <span class="small fw-bold text-uppercase">
+                        {% if res.percentage >= 33 %}Passed{% else %}Failed{% endif %}
+                    </span>
+                    <i class="fas {% if res.percentage >= 33 %}fa-check-circle{% else %}fa-times-circle{% endif %}"></i>
+                </div>
+
+                <div class="card-body p-4">
+                    <h5 class="fw-bold text-dark mb-1 text-truncate">{{ res.exam.title }}</h5>
+                    <p class="text-muted small mb-4">
+                        <i class="far fa-calendar-alt me-1"></i> {{ res.completed_at|date:"d M Y, h:i A" }}
+                    </p>
+                    
+                    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 mb-3 border">
+                        <div class="text-center">
+                            <p class="mb-0 text-muted x-small fw-bold">SCORE</p>
+                            <h4 class="mb-0 fw-bold">{{ res.score }}<span class="text-muted fs-6">/{{ res.total_questions }}</span></h4>
+                        </div>
+                        <div class="vr mx-2"></div>
+                        <div class="text-center">
+                            <p class="mb-0 text-muted x-small fw-bold">PERCENT</p>
+                            <h4 class="mb-0 fw-bold text-primary">{{ res.percentage }}%</h4>
+                        </div>
+                    </div>
+
+                    <div class="progress" style="height: 8px; border-radius: 10px;">
+                        <div class="progress-bar {% if res.percentage >= 33 %}bg-success{% else %}bg-danger{% endif %} progress-bar-striped" 
+                             role="progressbar" style="width: {{ res.percentage }}%"></div>
+                    </div>
+                </div>
+                
+                <div class="card-footer bg-white border-0 text-center pb-3">
+                    <button class="btn btn-outline-secondary btn-sm rounded-pill w-100 py-2" onclick="window.print()">
+                        <i class="fas fa-download me-1"></i> Save Report
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <div class="p-5 bg-white shadow-sm rounded-5 d-inline-block border">
+                <i class="fas fa-folder-open fa-4x text-muted mb-3 opacity-25"></i>
+                <h4 class="text-muted fw-bold">Bhai, History Khali Hai!</h4>
+                <p class="text-muted">Aapne abhi tak koi exam nahi diya hai. Sahi code enter karke shuru karein.</p>
+                <a href="{% url 'home' %}" class="btn btn-primary rounded-pill px-5 py-2 mt-3 shadow">
+                    Enroll Now
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .result-card { transition: 0.3s ease; border-bottom: 4px solid transparent !important; }
+    .result-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0,0,0,0.1) !important; }
+    .x-small { font-size: 0.7rem; letter-spacing: 1px; }
+    .bg-success { background-color: #2ecc71 !important; }
+    .bg-danger { background-color: #e74c3c !important; }
+</style>
+{% endblock %}

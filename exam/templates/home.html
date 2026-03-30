@@ -1,0 +1,86 @@
+{% extends 'base.html' %} 
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card p-5 text-center shadow-lg border-0" style="border-radius: 25px; background: #ffffff;">
+            
+            <div class="mb-4">
+                <div class="d-inline-block p-3 bg-light rounded-circle shadow-sm" style="width: 85px; height: 85px; margin: 0 auto; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-shield-alt fa-2x text-primary"></i>
+                </div>
+            </div>
+            
+            <h3 class="fw-bold mb-2 text-dark">Ready for Exam?</h3>
+            <p class="text-muted small mb-4">Apne teacher se mila hua <strong>6-digit Unique Code</strong> niche enter karein.</p>
+            
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <input type="text" 
+                           name="exam_code" 
+                           id="examCodeInput"
+                           class="form-control form-control-lg text-center fw-bold text-uppercase border-2" 
+                           placeholder="EX: A1B2C3" 
+                           maxlength="6" 
+                           style="letter-spacing: 5px; font-size: 1.8rem; border-color: #1a237e; border-radius: 15px; color: #1a237e;"
+                           required 
+                           autofocus
+                           autocomplete="off">
+                </div>
+                
+                <button type="submit" class="btn btn-pro w-100 btn-lg py-3 fw-bold shadow-sm" style="border-radius: 15px; background-color: #1a237e; border: none; transition: 0.3s;">
+                    <i class="fas fa-play-circle me-2"></i> START EXAMINATION
+                </button>
+            </form>
+
+            {% if messages %}
+                <div class="mt-4">
+                    {% for message in messages %}
+                        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} py-3 small border-0 shadow-sm mb-2" style="border-radius: 12px; font-weight: 500;">
+                            <i class="fas {% if message.tags == 'error' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} me-2"></i> 
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            <div class="mt-4 pt-3 border-top">
+                <p class="x-small text-muted mb-0">
+                    <i class="fas fa-info-circle me-1 text-primary"></i> 
+                    Make sure your internet is stable. Session cannot be restarted once started.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Focus and Hover Effects */
+    .form-control:focus {
+        border-color: #0d47a1 !important;
+        box-shadow: 0 0 15px rgba(13, 71, 161, 0.15);
+        outline: none;
+    }
+
+    .btn-pro:hover {
+        background-color: #0d47a1 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(26, 35, 126, 0.3);
+    }
+
+    .x-small { font-size: 0.75rem; }
+
+    /* Input animation */
+    #examCodeInput {
+        transition: all 0.3s ease;
+    }
+</style>
+
+<script>
+    // Auto-focus input and prevent spaces
+    document.getElementById('examCodeInput').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\s/g, '').toUpperCase();
+    });
+</script>
+{% endblock %}

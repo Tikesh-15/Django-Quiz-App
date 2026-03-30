@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card p-4 shadow-lg border-0" style="border-radius: 20px;">
+            <h3 class="fw-bold text-center mb-4 text-primary">Join Online Exam Pro</h3>
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="mb-4 text-center">
+                    <label class="form-label fw-bold d-block mb-3">Aap Kaun Hain? (Select Role)</label>
+                    <div class="btn-group w-100" role="group">
+                        <input type="radio" class="btn-check" name="role" value="student" id="role1" checked>
+                        <label class="btn btn-outline-primary py-2" for="role1"><i class="fas fa-user-graduate me-2"></i>Student</label>
+
+                        <input type="radio" class="btn-check" name="role" value="teacher" id="role2">
+                        <label class="btn btn-outline-primary py-2" for="role2"><i class="fas fa-chalkboard-teacher me-2"></i>Teacher</label>
+                    </div>
+                </div>
+
+                <div class="form-group mb-3">
+                    {{ form.as_p }}
+                </div>
+
+                <button type="submit" class="btn btn-pro w-100 py-3 fw-bold shadow">
+                    CREATE ACCOUNT <i class="fas fa-user-plus ms-2"></i>
+                </button>
+            </form>
+            <p class="mt-4 text-center small">Pehle se account hai? <a href="{% url 'login' %}" class="fw-bold text-decoration-none">Login karein</a></p>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Django form fields ko Bootstrap jaisa banane ke liye */
+    input[type="text"], input[type="password"] {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
